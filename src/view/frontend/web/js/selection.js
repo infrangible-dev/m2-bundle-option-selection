@@ -13,7 +13,7 @@ define([
 ], function ($, domReady, selection, utils, _) {
     'use strict';
 
-    var globalOptions = {
+    const globalOptions = {
         index: {},
         productBundleSelector: 'input.bundle.option, select.bundle.option, textarea.bundle.option',
         productBundleTriggerSelector: '.bundle-options-container',
@@ -27,23 +27,23 @@ define([
         },
 
         _init: function() {
-            var self = this;
+            const self = this;
 
             domReady(function() {
-                var form = self.productBundleContainerSelector ? self.productBundleContainerSelector : self.element;
-                var options = $(self.options.productBundleSelector, form);
+                const form = self.productBundleContainerSelector ? self.productBundleContainerSelector : self.element;
+                const options = $(self.options.productBundleSelector, form);
 
                 selection.setOptions(self.options);
 
                 options.on('change', function() {
-                    var selectedProductIds = self.collectSelectedProductIds();
+                    const selectedProductIds = self.collectSelectedProductIds();
                     console.debug('Bundle options have selected product ids: ' + _.compact(selectedProductIds));
 
                     $(self.options.productBundleTriggerSelector).trigger('bundle_changed', [selectedProductIds]);
 
-                    var option = $(this);
-                    var optionId = utils.findOptionId(option[0]);
-                    var optionSelectedProductIds = selectedProductIds[optionId];
+                    const option = $(this);
+                    const optionId = utils.findOptionId(option[0]);
+                    const optionSelectedProductIds = selectedProductIds[optionId];
                     console.debug('Changed bundle option with id: ' +  optionId +
                         ' has selected product ids: ' + _.compact(optionSelectedProductIds));
 
@@ -51,7 +51,7 @@ define([
                         [optionId, optionSelectedProductIds]);
                 });
 
-                var selectedProductIds = selection.collectSelectedProductIds(form);
+                const selectedProductIds = selection.collectSelectedProductIds(form);
                 console.debug('Bundle options have selected product ids: ' + _.compact(selectedProductIds));
 
                 $.each(selectedProductIds, function(optionId, optionSelectedProductIds) {

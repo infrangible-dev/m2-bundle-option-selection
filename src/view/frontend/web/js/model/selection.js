@@ -13,7 +13,7 @@ define([
 ], function ($, ko, _, utils) {
     'use strict';
 
-    var defaultProductBundleSelector = 'input.bundle.option, select.bundle.option, textarea.bundle.option';
+    const defaultProductBundleSelector = 'input.bundle.option, select.bundle.option, textarea.bundle.option';
 
     return {
         cache: {},
@@ -30,19 +30,19 @@ define([
                 productBundleSelector = defaultProductBundleSelector;
             }
 
-            var options = $(productBundleSelector, form);
+            const options = $(productBundleSelector, form);
 
             return this.getCollectSelectedProductIds(options);
         },
 
         getCollectSelectedProductIds: function(options) {
-            var self = this;
-            var selectedProductIds = {};
+            const self = this;
+            const selectedProductIds = {};
 
             options.each(function() {
-                var option = $(this);
-                var optionId = utils.findOptionId(option[0]);
-                var optionValueSelectedProductIds = self.getOptionValueSelectedProductIds(option);
+                const option = $(this);
+                const optionId = utils.findOptionId(option[0]);
+                const optionValueSelectedProductIds = self.getOptionValueSelectedProductIds(option);
 
                 if (! (optionId in selectedProductIds)) {
                     selectedProductIds[optionId] = [];
@@ -57,19 +57,19 @@ define([
         },
 
         getOptionValueSelectedProductIds: function(option) {
-            var self = this;
+            const self = this;
 
-            var optionType = option.prop('type');
-            var optionId = utils.findOptionId(option[0]);
-            var optionValue = option.val() || null;
+            const optionType = option.prop('type');
+            const optionId = utils.findOptionId(option[0]);
+            const optionValue = option.val() || null;
 
-            var optionValueSelectedProductIds = [];
+            const optionValueSelectedProductIds = [];
 
             if (optionValue) {
-                var optionIndex = self.options.index[optionId];
+                const optionIndex = self.options.index[optionId];
 
                 if (optionIndex) {
-                    var selectedProductId;
+                    let selectedProductId;
 
                     switch (optionType) {
                         case 'select-one':
