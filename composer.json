@@ -1,11 +1,14 @@
 {
     "name": "infrangible/m2-bundle-option-selection",
-    "description": "Infrangible Magento 2 Bundle Option Selection",
+    "description": "Groundwork for other Infrangible modules: tells them on bundle product pages which products the shopper has currently selected in each bundle option.",
     "type": "magento2-module",
     "version": "2.0.0",
     "license": "MIT",
     "keywords": [
-        "Magento"
+        "Magento",
+        "Magento 2",
+        "Adobe Commerce",
+        "Bundle products"
     ],
     "homepage": "https://www.infrangible.dev/modules/bundle-option-selection",
     "authors": [
