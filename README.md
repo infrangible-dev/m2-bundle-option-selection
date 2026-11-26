@@ -29,7 +29,7 @@ container of the option elements, by default the form `#product_addtocart_form`)
 ## Requirements
 
 - Magento Open Source or Adobe Commerce 2.4.6 or newer
-- PHP 8.2 or newer
+- PHP 8.1 or newer
 
 ## Installation
 

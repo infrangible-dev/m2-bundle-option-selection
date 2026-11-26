@@ -24,27 +24,28 @@ define([
     return $.widget('infrangible.bundleOptionSelection', {
         options: globalOptions,
 
-        _create: function() {
+        _create: function () {
         },
 
-        _init: function() {
+        _init: function () {
             const self = this;
 
-            domReady(function() {
-                const form = self.getContainer();
-                const options = $(self.options.productBundleSelector, form);
+            domReady(function () {
+                const form = self.getContainer(),
+                    options = $(self.options.productBundleSelector, form);
 
                 selection.setOptions(self.options);
 
-                options.on('change', function() {
-                    const selectedProductIds = self.collectSelectedProductIds();
+                options.on('change', function () {
+                    const selectedProductIds = self.collectSelectedProductIds(),
+                        option = $(this),
+                        optionId = utils.findOptionId(option[0]),
+                        optionSelectedProductIds = selectedProductIds[optionId];
+
                     console.debug('Bundle options have selected product ids: ' + _.compact(selectedProductIds));
 
                     $(self.options.productBundleTriggerSelector).trigger('bundle_changed', [selectedProductIds]);
 
-                    const option = $(this);
-                    const optionId = utils.findOptionId(option[0]);
-                    const optionSelectedProductIds = selectedProductIds[optionId];
                     console.debug('Changed bundle option with id: ' +  optionId +
                         ' has selected product ids: ' + _.compact(optionSelectedProductIds));
 
@@ -52,26 +53,35 @@ define([
                         [optionId, optionSelectedProductIds]);
                 });
 
-                const selectedProductIds = selection.collectSelectedProductIds(form);
-                console.debug('Bundle options have selected product ids: ' + _.compact(selectedProductIds));
-
-                $.each(selectedProductIds, function(optionId, optionSelectedProductIds) {
-                    console.debug('Bundle option with id: ' +  optionId +
-                        ' has selected product ids: ' + _.compact(optionSelectedProductIds));
-
-                    $(self.options.productBundleTriggerSelector).trigger('bundle_option_changed',
-                        [optionId, optionSelectedProductIds]);
-                });
-
-                $(self.options.productBundleTriggerSelector).trigger('bundle_changed', [selectedProductIds]);
+                self.triggerSelectedProductIds(selection.collectSelectedProductIds(form));
             });
         },
 
-        collectSelectedProductIds: function() {
+        /**
+         * Triggers the events of the selected products of every option and of the whole bundle.
+         *
+         * @param {Object<string, Array<string>>} selectedProductIds the IDs of the selected products by option ID
+         */
+        triggerSelectedProductIds: function (selectedProductIds) {
+            const triggerNode = $(this.options.productBundleTriggerSelector);
+
+            console.debug('Bundle options have selected product ids: ' + _.compact(selectedProductIds));
+
+            $.each(selectedProductIds, function (optionId, optionSelectedProductIds) {
+                console.debug('Bundle option with id: ' +  optionId +
+                    ' has selected product ids: ' + _.compact(optionSelectedProductIds));
+
+                triggerNode.trigger('bundle_option_changed', [optionId, optionSelectedProductIds]);
+            });
+
+            triggerNode.trigger('bundle_changed', [selectedProductIds]);
+        },
+
+        collectSelectedProductIds: function () {
             return selection.collectSelectedProductIds(this.getContainer());
         },
 
-        getContainer: function() {
+        getContainer: function () {
             return this.options.productBundleContainerSelector ?
                 $(this.options.productBundleContainerSelector) : this.element;
         }

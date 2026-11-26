@@ -21,11 +21,11 @@ define([
             index: {}
         },
 
-        setOptions: function(options) {
+        setOptions: function (options) {
             this.options = options;
         },
 
-        collectSelectedProductIds: function(form, productBundleSelector) {
+        collectSelectedProductIds: function (form, productBundleSelector) {
             if (productBundleSelector === undefined) {
                 productBundleSelector = defaultProductBundleSelector;
             }
@@ -35,20 +35,20 @@ define([
             return this.getCollectSelectedProductIds(options);
         },
 
-        getCollectSelectedProductIds: function(options) {
-            const self = this;
-            const selectedProductIds = {};
+        getCollectSelectedProductIds: function (options) {
+            const self = this,
+                selectedProductIds = {};
 
-            options.each(function() {
-                const option = $(this);
-                const optionId = utils.findOptionId(option[0]);
-                const optionValueSelectedProductIds = self.getOptionValueSelectedProductIds(option);
+            options.each(function () {
+                const option = $(this),
+                    optionId = utils.findOptionId(option[0]),
+                    optionValueSelectedProductIds = self.getOptionValueSelectedProductIds(option);
 
-                if (! (optionId in selectedProductIds)) {
+                if (!(optionId in selectedProductIds)) {
                     selectedProductIds[optionId] = [];
                 }
 
-                $.each(optionValueSelectedProductIds, function(key, selectedProductId) {
+                $.each(optionValueSelectedProductIds, function (key, selectedProductId) {
                     selectedProductIds[optionId].push(selectedProductId);
                 });
             });
@@ -56,65 +56,59 @@ define([
             return selectedProductIds;
         },
 
-        getOptionValueSelectedProductIds: function(option) {
-            const self = this;
+        getOptionValueSelectedProductIds: function (option) {
+            const self = this,
+                optionId = utils.findOptionId(option[0]),
+                optionValue = option.val() || null,
+                optionIndex = optionValue ? self.options.index[optionId] : undefined,
+                optionValueSelectedProductIds = optionIndex ?
+                    self.findSelectedProductIds(option, optionIndex, optionValue) : [];
 
-            const optionType = option.prop('type');
-            const optionId = utils.findOptionId(option[0]);
-            const optionValue = option.val() || null;
-
-            const optionValueSelectedProductIds = [];
-
-            if (optionValue) {
-                const optionIndex = self.options.index[optionId];
-
-                if (optionIndex) {
-                    let selectedProductId;
-
-                    switch (optionType) {
-                        case 'select-one':
-                        case 'hidden':
-                            selectedProductId = optionIndex[optionValue];
-                            if (selectedProductId) {
-                                optionValueSelectedProductIds.push(selectedProductId);
-                            }
-                            break;
-
-                        case 'select-multiple':
-                            if (Array.isArray(optionValue)) {
-                                $.each(optionValue, function(key, optionValueValue) {
-                                    selectedProductId = optionIndex[optionValueValue];
-                                    if (selectedProductId) {
-                                        optionValueSelectedProductIds.push(selectedProductId);
-                                    }
-                                });
-                            }
-                            break;
-
-                        case 'radio':
-                        case 'checkbox':
-                            if (option.is(':checked')) {
-                                selectedProductId = optionIndex[optionValue];
-                                if (selectedProductId) {
-                                    optionValueSelectedProductIds.push(selectedProductId);
-                                }
-                            }
-                            break;
-                    }
-                }
-            }
-
-            if (! (optionId in self.cache)) {
+            if (!(optionId in self.cache)) {
                 self.cache[optionId] = [];
             }
 
             self.cache[optionId][optionValue] = [];
 
-            $.each(optionValueSelectedProductIds, function(key, selectedProductId) {
+            $.each(optionValueSelectedProductIds, function (key, selectedProductId) {
                 self.cache[optionId][optionValue].push(selectedProductId);
             });
 
             return optionValueSelectedProductIds;
+        },
+
+        /**
+         * Returns the IDs of the products that the value of the option selects, by the type of the option.
+         *
+         * @param {jQuery} option
+         * @param {Object<string, string>} optionIndex the product IDs by option value
+         * @param {string|Array<string>} optionValue
+         * @returns {Array<string>}
+         */
+        findSelectedProductIds: function (option, optionIndex, optionValue) {
+            let values = [];
+
+            switch (option.prop('type')) {
+            case 'select-one':
+            case 'hidden':
+                values = [optionValue];
+                break;
+
+            case 'select-multiple':
+                values = Array.isArray(optionValue) ? optionValue : [];
+                break;
+
+            case 'radio':
+            case 'checkbox':
+                values = option.is(':checked') ? [optionValue] : [];
+                break;
+            }
+
+            return values.map(function (value) {
+                return optionIndex[value];
+            }).filter(function (selectedProductId) {
+                return !!selectedProductId;
+            });
         }
     };
 });
